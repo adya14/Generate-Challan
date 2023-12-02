@@ -1,57 +1,44 @@
+def gv
+
 pipeline {
     agent any
-
+    parameters {
+        choice(name: 'VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: '')
+        booleanParam(name: 'executeTests', defaultValue: true, description: '')
+    }
     stages {
-        stage('Checkout') {
+        stage("init") {
             steps {
-                // Checkout the source code from your version control system
-                checkout scm
-            }
-        }
-
-        stage('Build') {
-            steps {
-                // Use Maven to build the project (replace with your build tool)
                 script {
-                    sh 'mvn clean install'
+                   gv = load "script.groovy" 
                 }
             }
         }
-
-        stage('Test') {
+        stage("build") {
             steps {
-                // Run tests (replace with your testing framework and commands)
                 script {
-                    sh 'mvn test'
+                    gv.buildApp()
                 }
             }
         }
-
-        stage('Deploy') {
+        stage("test") {
+            when {
+                expression {
+                    params.executeTests
+                }
+            }
             steps {
-                // Deployment steps go here (replace with your deployment process)
                 script {
-                    echo 'Deploying the application...'
-                    // Add deployment commands or scripts
+                    gv.testApp()
                 }
             }
         }
-    }
-
-    post {
-        success {
-            // Actions to perform when the pipeline is successful
-            echo 'Build and deployment successful!'
+        stage("deploy") {
+            steps {
+                script {
+                    gv.deployApp()
+                }
+            }
         }
-
-        failure {
-            // Actions to perform when the pipeline fails
-            echo 'Build or deployment failed. Take necessary actions.'
-        }
-
-        always {
-            // Actions to perform regardless of the build result
-            echo 'Pipeline completed.'
-        }
-    }
+    }   
 }
