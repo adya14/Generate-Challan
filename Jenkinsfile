@@ -4,7 +4,7 @@ pipeline {
     environment {
         PYTHON_VERSION = '3.9.1'
         IMAGE_NAME = 'your-docker-registry/your-python-app'
-        DOCKERFILE_PATH = 'Dockerfile' // Adjust if your Dockerfile is in a different location
+        DOCKERFILE_PATH = 'Dockerfile' 
     }
 
     stages {
@@ -17,7 +17,7 @@ pipeline {
         stage('Prepare Environment') {
             steps {
                 script {
-                    sh "python${PYTHON_VERSION} -m venv venv"
+                    sh "python${3.9.1} -m venv venv"
                     sh "source venv/bin/activate"
                 }
             }
