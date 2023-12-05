@@ -1,76 +1,48 @@
 pipeline {
     agent any
 
-    environment {
-        PYTHON_VERSION = '3.9.1'
-        IMAGE_NAME = 'your-docker-registry/your-python-app'
-        DOCKERFILE_PATH = 'Dockerfile' 
-    }
-
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Prepare Environment') {
-            steps {
-                script {
-                    sh "python${3.9.1} -m venv venv"
-                    sh "source venv/bin/activate"
-                }
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                sh "pip install -r requirements.txt"
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                sh "python -m pytest"
-            }
-        }
-
         stage('Build') {
             steps {
-                script {
-                    // Include any additional build steps here
-                    sh "python setup.py sdist bdist_wheel"
-                }
+                // Your build steps here
+
+                // Example: Trigger failure for demonstration
+                sh 'exit 1'
+            }
+        }
+
+        stage('Unit Test') {
+            steps {
+                // Your unit test steps here
+
+                // Example: Trigger failure for demonstration
+                sh 'exit 1'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    // Build Docker image
-                    sh "docker build -t ${IMAGE_NAME} -f ${DOCKERFILE_PATH} ."
-                }
+                // Your Docker build steps here
+
+                // Example: Trigger failure for demonstration
+                sh 'exit 1'
             }
         }
 
         stage('Deploy') {
             steps {
-                // Add deployment steps here, if applicable
+                // Your deployment steps here
             }
         }
     }
 
     post {
-        success {
-            echo 'Build and deployment successful!'
-        }
-
         failure {
-            echo 'Build or deployment failed. Take necessary actions.'
-        }
-
-        always {
-            echo 'Pipeline completed.'
+            // Send email on failure
+            emailext subject: 'Pipeline Failed: ${currentBuild.fullDisplayName}',
+                      body: 'The pipeline has failed. Please check the Jenkins console output for details.',
+                      to: 'adya.tiwari20@st.niituniversity.in, somia.kumari20@st.niituniversity.in, tanya.patel20@st.niituniversity.in',
+                      recipientProviders: [[$class: 'CulpritsRecipientProvider']]
         }
     }
 }
